@@ -1,21 +1,52 @@
+import { useParams, Link, useNavigate } from "react-router-dom";
+
 import Loader from "@/components/shared/Loader";
-import PostStats from "@/components/shared/PostStats";
 import { Button } from "@/components/ui/button";
-import { useUserContext } from "@/context/AuthContext";
-import { useGetPostById } from "@/lib/react-query/queriesAndMutations"
+import PostStats from "@/components/shared/PostStats";
+
+import { useDeletePost, useGetPostById, useGetUserPosts } from "@/lib/react-query/queriesAndMutations"
 import { multiFormatDateString } from "@/lib/utils";
-import { useParams, Link } from "react-router-dom";
+import { useUserContext } from "@/context/AuthContext";
+import GridPostList from "@/components/shared/GridPostList";
 
 const PostDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
-  const { data: post, isPending } = useGetPostById(id || '');
   const { user } = useUserContext();
+  
+  const { data: post, isPending } = useGetPostById(id || '');
+  const { data: userPosts, isPending: isUserPostLoading } = useGetUserPosts(
+    post?.creator.$id
+  )
+  const { mutate: deletePost } = useDeletePost();
 
-  const handleDeletePost = () => {}
+  const relatedPosts = userPosts?.documents.filter(
+    (userPosts) => userPosts.$id !== id
+  );
+
+  const handleDeletePost = () => {
+    deletePost({ postId: id, imageId: post?.imageId });
+    navigate(-1);
+  };
 
   return (
     <div className="post_details-container">
-      {isPending ? <Loader /> : (
+      <div className="hidden md:flex max-w-5xl w-full">
+        <Button
+          onClick={() => navigate(-1)}
+          variant="ghost"
+          className="shad-button_ghost">
+          <img
+            src={"/assets/icons/back.svg"}
+            alt="back"
+            width={24}
+            height={24}
+          />
+          <p className="small-medium lg:base-medium">Back</p>
+        </Button>
+      </div>
+      
+      {isPending || !post ? ( <Loader /> ) : (
         <div className="post_details-card">
           <img 
             src={post?.imageUrl}
@@ -81,6 +112,19 @@ const PostDetails = () => {
           </div>
         </div>
       )}
+
+      <div className="w-full max-w-5xl">
+        <hr className="border w-full border-dark-4/80" />
+      
+        <h3 className="body-bold md:h3-bold w-full my-10">
+          More Related Posts
+        </h3>
+        {isUserPostLoading || !relatedPosts ? (
+          <Loader />
+        ) : (
+          <GridPostList posts={relatedPosts} />
+        )}
+      </div>
     </div>
   )
 }
