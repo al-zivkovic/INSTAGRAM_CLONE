@@ -32,7 +32,7 @@ const UpdateProfile = () => {
   });
 
   const { data: currentUser } = useGetUserById(id || "");
-  const { mutateAsync: updateUser, isPending: isLoadingUpdate } = useUpdateUser();
+  const { mutateAsync: updateUser, isLoading: isLoadingUpdate } = useUpdateUser();
 
   if (!currentUser) 
     return (

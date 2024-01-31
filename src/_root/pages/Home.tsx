@@ -5,9 +5,9 @@ import { useGetRecentPosts, useGetUsers } from "@/lib/react-query/queriesAndMuta
 import { Models } from 'appwrite';
 
 const Home = () => {
-  const { data: posts, isPending: isPostLoading, isError: isErrorPosts } = useGetRecentPosts();
+  const { data: posts, isLoading: isPostLoading, isError: isErrorPosts } = useGetRecentPosts();
   
-  const { data: creators, isPending: isUserLoading, isError: isErrorCreators, } = useGetUsers(10);
+  const { data: creators, isLoading: isUserLoading, isError: isErrorCreators, } = useGetUsers(10);
 
   if (isErrorPosts || isErrorCreators) {
     return (
