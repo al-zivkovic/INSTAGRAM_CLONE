@@ -1,22 +1,24 @@
 import { Models } from "appwrite";
-import { useGetCurrentUser } from "@/lib/react-query/queriesAndMutations"
-import Loader from "@/components/shared/Loader";
-import GridPostList from "@/components/shared/GridPostList";
+
+import { GridPostList, Loader } from "@/components/shared";
+import { useGetCurrentUser } from "@/lib/react-query/queries";
 
 const Saved = () => {
   const { data: currentUser } = useGetCurrentUser();
 
-  const savePosts = currentUser?.save.map((savePost: Models.Document) => ({
-    ...savePost.post,
-    creator: {
-      imageUrl: currentUser.imageUrl,
-    },
-  })).reverse();
+  const savePosts = currentUser?.save
+    .map((savePost: Models.Document) => ({
+      ...savePost.post,
+      creator: {
+        imageUrl: currentUser.imageUrl,
+      },
+    }))
+    .reverse();
 
   return (
     <div className="saved-container">
       <div className="flex gap-2 w-full max-w-5xl">
-        <img 
+        <img
           src="/assets/icons/save.svg"
           width={36}
           height={36}
@@ -38,7 +40,7 @@ const Saved = () => {
         </ul>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Saved
+export default Saved;

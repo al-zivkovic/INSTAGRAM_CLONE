@@ -1,13 +1,22 @@
-import Loader from "@/components/shared/Loader";
-import PostCard from "@/components/shared/PostCard";
-import UserCard from "@/components/shared/UserCard";
-import { useGetRecentPosts, useGetUsers } from "@/lib/react-query/queriesAndMutations";
-import { Models } from 'appwrite';
+import { Models } from "appwrite";
+
+// import { useToast } from "@/components/ui/use-toast";
+import { Loader, PostCard, UserCard } from "@/components/shared";
+import { useGetRecentPosts, useGetUsers } from "@/lib/react-query/queries";
 
 const Home = () => {
-  const { data: posts, isLoading: isPostLoading, isError: isErrorPosts } = useGetRecentPosts();
-  
-  const { data: creators, isLoading: isUserLoading, isError: isErrorCreators, } = useGetUsers(10);
+  // const { toast } = useToast();
+
+  const {
+    data: posts,
+    isLoading: isPostLoading,
+    isError: isErrorPosts,
+  } = useGetRecentPosts();
+  const {
+    data: creators,
+    isLoading: isUserLoading,
+    isError: isErrorCreators,
+  } = useGetUsers(10);
 
   if (isErrorPosts || isErrorCreators) {
     return (
@@ -30,10 +39,12 @@ const Home = () => {
           {isPostLoading && !posts ? (
             <Loader />
           ) : (
-            <ul className="flex flex-col flex-1 gap-9 w-full">
-                {posts?.documents.map((post: Models.Document) => (
-                  <PostCard post={post} key={post.caption} />
-                ))}
+            <ul className="flex flex-col flex-1 gap-9 w-full ">
+              {posts?.documents.map((post: Models.Document) => (
+                <li key={post.$id} className="flex justify-center w-full">
+                  <PostCard post={post} />
+                </li>
+              ))}
             </ul>
           )}
         </div>
@@ -47,14 +58,14 @@ const Home = () => {
           <ul className="grid 2xl:grid-cols-2 gap-6">
             {creators?.documents.map((creator) => (
               <li key={creator?.$id}>
-                <UserCard user={creator}/>
+                <UserCard user={creator} />
               </li>
             ))}
           </ul>
-        )}      
-      </div>  
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
